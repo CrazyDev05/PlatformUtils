@@ -1,0 +1,119 @@
+package de.crazydev22.platformutils.spigot;
+
+import de.crazydev22.platformutils.scheduler.task.CompletableTask;
+import de.crazydev22.platformutils.scheduler.task.Task;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+public class SpigotTask implements Task {
+    protected final BukkitTask task;
+    protected final boolean repeating;
+    private final AtomicReference<ExecutionState> state = new AtomicReference<>(ExecutionState.IDLE);
+
+    public SpigotTask(@NotNull BukkitTask task, boolean repeating) {
+        this.task = task;
+        this.repeating = repeating;
+    }
+
+    @Override
+    public @NotNull Plugin getOwner() {
+        return task.getOwner();
+    }
+
+    @Override
+    public boolean isRepeating() {
+        return repeating;
+    }
+
+    @Override
+    public boolean isAsync() {
+        return !task.isSync();
+    }
+
+    @Override
+    public @NotNull CancelledState cancel() {
+        for (var curr = this.state.get();;) {
+            switch (curr) {
+                case IDLE -> {
+                    if (ExecutionState.IDLE != (curr = state.compareAndExchange(ExecutionState.IDLE, ExecutionState.CANCELLED)))
+                        continue;
+                    task.cancel();
+                    return CancelledState.CANCELLED_BY_CALLER;
+                }
+                case RUNNING -> {
+                    if (!repeating) return CancelledState.RUNNING;
+                    if (ExecutionState.RUNNING != (curr = state.compareAndExchange(ExecutionState.RUNNING, ExecutionState.CANCELLED_RUNNING)))
+                        continue;
+                    task.cancel();
+                    return CancelledState.NEXT_RUNS_CANCELLED;
+                }
+                case CANCELLED_RUNNING -> {
+                    return CancelledState.NEXT_RUNS_CANCELLED_ALREADY;
+                }
+                case FINISHED -> {
+                    return CancelledState.ALREADY_EXECUTED;
+                }
+                case CANCELLED -> {
+                    return CancelledState.CANCELLED_ALREADY;
+                }
+            };
+        }
+    }
+
+    @Override
+    public @NotNull ExecutionState getExecutionState() {
+        return state.get();
+    }
+
+    public void run(Consumer<Task> action) {
+        if (ExecutionState.IDLE != state.compareAndExchange(ExecutionState.IDLE, ExecutionState.RUNNING))
+            return;
+
+        try {
+            action.accept(this);
+        } finally {
+            if (!repeating) state.set(ExecutionState.FINISHED);
+            else state.compareAndSet(ExecutionState.RUNNING, ExecutionState.IDLE);
+        }
+    }
+
+    public static class Completable<T> extends SpigotTask implements CompletableTask<T> {
+        private final CompletableFuture<T> result = new CompletableFuture<>();
+
+        public Completable(@NotNull BukkitTask task) {
+            super(task, false);
+        }
+
+        @Override
+        public @NotNull CompletableFuture<T> getResult() {
+            return result;
+        }
+
+        @Override
+        public void complete(@NotNull Function<CompletableTask<T>, T> function) {
+            run(t -> {
+                if (result.isDone()) return;
+                try {
+                    result.complete(function.apply(this));
+                } catch (Throwable e) {
+                    result.completeExceptionally(e);
+                }
+            });
+        }
+
+        @Override
+        public @NotNull CancelledState cancel() {
+            final CancelledState state = super.cancel();
+            if (state == CancelledState.CANCELLED_BY_CALLER || state == CancelledState.CANCELLED_ALREADY) {
+                result.cancel(false);
+            }
+            return state;
+        }
+    }
+}
