@@ -3,7 +3,7 @@ import com.vanniktech.maven.publish.SonatypeHost
 plugins {
     java
     alias(libs.plugins.publish)
-    alias(libs.plugins.licenser)
+    alias(libs.plugins.spotless)
     alias(libs.plugins.dokka)
 }
 
@@ -23,6 +23,7 @@ dependencies {
 
 allprojects {
     apply(plugin = "java")
+    apply(plugin = "com.diffplug.spotless")
 
     java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 
@@ -34,6 +35,14 @@ allprojects {
 
     dependencies {
         compileOnly("org.jetbrains:annotations:26.0.2")
+    }
+
+    spotless.java {
+        removeUnusedImports()
+        endWithNewline()
+        trimTrailingWhitespace()
+        licenseHeaderFile(rootProject.file(".github/HEADER"))
+            .updateYearWithLatest(true)
     }
 }
 
@@ -71,6 +80,12 @@ mavenPublishing {
         name.set("PlatformUtils")
         description.set("A toolbox for platform independent plugins.")
         url.set("https://github.com/CrazyDev05/PlatformUtils")
+        licenses {
+            license {
+                name.set("The MIT License")
+                url.set("https://opensource.org/licenses/MIT")
+            }
+        }
         developers {
             developer {
                 id.set("crazydev22")
