@@ -2,6 +2,7 @@ package de.crazydev22.platformutils.scheduler;
 
 import de.crazydev22.platformutils.scheduler.task.CompletableTask;
 import de.crazydev22.platformutils.scheduler.task.Task;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
@@ -16,6 +17,7 @@ import java.util.function.Supplier;
  * sleep night skipping, executing commands for console, and other misc. tasks that do not belong to any specific region.
  * </p>
  */
+@ApiStatus.NonExtendable
 public interface IGlobalScheduler {
     /**
      * Schedules a task to be executed on the global region on the next tick.

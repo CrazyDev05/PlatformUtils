@@ -6,6 +6,7 @@ import de.crazydev22.platformutils.scheduler.task.Task;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
@@ -22,6 +23,7 @@ import java.util.function.Supplier;
  * will not.
  * </p>
  */
+@ApiStatus.NonExtendable
 public interface IRegionScheduler {
     /**
      * Schedules a task to be executed on the region which owns the location on the next tick.

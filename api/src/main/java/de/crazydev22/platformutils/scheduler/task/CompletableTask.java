@@ -13,6 +13,7 @@ import java.util.function.Function;
  *
  * @param <T> the type of the result produced upon completing the task.
  */
+@ApiStatus.NonExtendable
 public interface CompletableTask<T> extends Task {
 
     /**

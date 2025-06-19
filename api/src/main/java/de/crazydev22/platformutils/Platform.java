@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -20,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
  * for interacting with server regions, scheduling tasks, and other
  * server-related functionalities.
  */
+@ApiStatus.NonExtendable
 public interface Platform {
     /**
      * Folia: Returns whether the current thread is ticking a region and that

@@ -2,6 +2,7 @@ package de.crazydev22.platformutils.scheduler;
 
 import de.crazydev22.platformutils.scheduler.task.CompletableTask;
 import de.crazydev22.platformutils.scheduler.task.Task;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
@@ -13,6 +14,7 @@ import java.util.function.Supplier;
 /**
  * Scheduler that may be used to schedule tasks to execute asynchronously from the server tick process.
  */
+@ApiStatus.NonExtendable
 public interface IAsyncScheduler {
     /**
      * Schedules the specified task to be executed asynchronously immediately.

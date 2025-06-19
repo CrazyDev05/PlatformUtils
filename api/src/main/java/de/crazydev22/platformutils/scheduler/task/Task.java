@@ -1,11 +1,13 @@
 package de.crazydev22.platformutils.scheduler.task;
 
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a task scheduled to a scheduler.
  */
+@ApiStatus.NonExtendable
 public interface Task {
 
     /**
@@ -123,6 +125,6 @@ public interface Task {
         /**
          * The task is repeating and currently executing, but future executions are cancelled and will not occur.
          */
-        CANCELLED_RUNNING;
+        CANCELLED_RUNNING
     }
 }

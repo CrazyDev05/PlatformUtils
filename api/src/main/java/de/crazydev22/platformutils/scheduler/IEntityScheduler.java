@@ -2,6 +2,7 @@ package de.crazydev22.platformutils.scheduler;
 
 import de.crazydev22.platformutils.scheduler.task.CompletableTask;
 import de.crazydev22.platformutils.scheduler.task.Task;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -28,6 +29,7 @@ import java.util.function.Supplier;
  * contexts.
  * </p>
  */
+@ApiStatus.NonExtendable
 public interface IEntityScheduler {
 
     /**
