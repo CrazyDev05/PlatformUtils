@@ -1,4 +1,7 @@
+import com.vanniktech.maven.publish.JavaLibrary
+import com.vanniktech.maven.publish.JavadocJar
 import com.vanniktech.maven.publish.SonatypeHost
+import org.jetbrains.dokka.gradle.engine.parameters.KotlinPlatform
 
 plugins {
     java
@@ -8,7 +11,6 @@ plugins {
 }
 
 group = "de.crazydev22"
-version = "0.0.1"
 
 repositories {
     mavenCentral()
@@ -47,7 +49,20 @@ allprojects {
 }
 
 dokka.dokkaSourceSets.javaMain {
+    analysisPlatform = KotlinPlatform.JVM
     sourceRoots.from(project(":api").sourceSets.main.map { it.java.srcDirs })
+
+    sourceLink {
+        localDirectory.set(file("api/src/main/java"))
+        remoteUrl("https://github.com/CrazyDev05/PlatformUtils/blob/master/api/src/main/java")
+        remoteLineSuffix.set("#L")
+    }
+
+    sourceLink {
+        localDirectory.set(file("src/main/java"))
+        remoteUrl("https://github.com/CrazyDev05/PlatformUtils/blob/master/src/main/java")
+        remoteLineSuffix.set("#L")
+    }
 }
 
 tasks {
@@ -76,6 +91,7 @@ mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     //signAllPublications()
 
+    configure(JavaLibrary(JavadocJar.Javadoc()))
     pom {
         name.set("PlatformUtils")
         description.set("A toolbox for platform independent plugins.")
