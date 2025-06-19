@@ -36,6 +36,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -216,7 +217,7 @@ public interface Platform {
      * @param location Location to get chunk for
      * @return {@link CompletableFuture<Chunk>} that completes with the chunk, or null if the chunk did not exists and generation was not requested.
      */
-    default @NotNull CompletableFuture<@NotNull Chunk> getChunkAtAsync(@NotNull Location location) {
+    default @NotNull CompletableFuture<@Nullable Chunk> getChunkAtAsync(@NotNull Location location) {
         return getChunkAtAsync(location, true, false);
     }
 
@@ -227,7 +228,7 @@ public interface Platform {
      * @param generate Should the chunk generate
      * @return {@link CompletableFuture<Chunk>} that completes with the chunk, or null if the chunk did not exists and generation was not requested.
      */
-    default @NotNull CompletableFuture<@NotNull Chunk> getChunkAtAsync(@NotNull Location location, boolean generate) {
+    default @NotNull CompletableFuture<@Nullable Chunk> getChunkAtAsync(@NotNull Location location, boolean generate) {
         return getChunkAtAsync(location, generate, false);
     }
 
@@ -240,8 +241,33 @@ public interface Platform {
      * @param urgent   use high priority for chunk load ticket
      * @return {@link CompletableFuture<Chunk>} that completes with the chunk, or null if the chunk did not exists and generation was not requested.
      */
-    default @NotNull CompletableFuture<@NotNull Chunk> getChunkAtAsync(@NotNull Location location, boolean generate, boolean urgent) {
+    default @NotNull CompletableFuture<@Nullable Chunk> getChunkAtAsync(@NotNull Location location, boolean generate, boolean urgent) {
         return getChunkAtAsync(location.getWorld(), location.getBlockX() >> 4, location.getBlockZ() >> 4, generate, urgent);
+    }
+
+    /**
+     * Gets the chunk at the target location, loading it asynchronously if needed.
+     *
+     * @param world    World to load chunk for
+     * @param x        X coordinate of the chunk to load
+     * @param z        Z coordinate of the chunk to load
+     * @return {@link CompletableFuture<Chunk>} that completes with the chunk, or null if the chunk did not exists and generation was not requested.
+     */
+    default @NotNull CompletableFuture<@Nullable Chunk> getChunkAtAsync(@NotNull World world, int x, int z) {
+        return getChunkAtAsync(world, x, z, true);
+    }
+
+    /**
+     * Gets the chunk at the target location, loading it asynchronously if needed.
+     *
+     * @param world    World to load chunk for
+     * @param x        X coordinate of the chunk to load
+     * @param z        Z coordinate of the chunk to load
+     * @param generate Should the chunk generate
+     * @return {@link CompletableFuture<Chunk>} that completes with the chunk, or null if the chunk did not exists and generation was not requested.
+     */
+    default @NotNull CompletableFuture<@Nullable Chunk> getChunkAtAsync(@NotNull World world, int x, int z, boolean generate) {
+        return getChunkAtAsync(world, x, z, generate, false);
     }
 
     /**
@@ -254,7 +280,7 @@ public interface Platform {
      * @param urgent   use high priority for chunk load ticket
      * @return {@link CompletableFuture<Chunk>} that completes with the chunk, or null if the chunk did not exists and generation was not requested.
      */
-    @NotNull CompletableFuture<@NotNull Chunk> getChunkAtAsync(@NotNull World world, int x, int z, boolean generate, boolean urgent);
+    @NotNull CompletableFuture<@Nullable Chunk> getChunkAtAsync(@NotNull World world, int x, int z, boolean generate, boolean urgent);
 
     /**
      * Checks if the chunk containing the specified location has been generated.
