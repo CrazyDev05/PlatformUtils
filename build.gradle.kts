@@ -74,7 +74,7 @@ tasks {
 
 mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-    signAllPublications()
+    //signAllPublications()
 
     pom {
         name.set("PlatformUtils")
