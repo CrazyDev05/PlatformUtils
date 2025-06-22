@@ -51,7 +51,7 @@ public class PaperAsyncScheduler implements IAsyncScheduler {
     @Override
     public @NotNull <R> CompletableTask<R> run(@NotNull Function<CompletableTask<R>, R> task) {
         Ref<PaperTask.Completable<R>> ref = new Ref<>();
-        return ref.value = new PaperTask.Completable<>(scheduler.runNow(plugin, t -> ref.value.complete(task)), true);
+        return ref.set(new PaperTask.Completable<>(scheduler.runNow(plugin, ref.consume(task, PaperTask.Completable::complete)), true));
     }
 
     @Override
@@ -59,7 +59,7 @@ public class PaperAsyncScheduler implements IAsyncScheduler {
                                                       @Range(from = 0, to = Long.MAX_VALUE) long delay,
                                                       @NotNull TimeUnit unit) {
         Ref<PaperTask.Completable<R>> ref = new Ref<>();
-        return ref.value = new PaperTask.Completable<>(scheduler.runDelayed(plugin, t -> ref.value.complete(task), delay, unit), true);
+        return ref.set(new PaperTask.Completable<>(scheduler.runDelayed(plugin, ref.consume(task, PaperTask.Completable::complete), delay, unit), true));
     }
 
     @Override
@@ -68,6 +68,6 @@ public class PaperAsyncScheduler implements IAsyncScheduler {
                                         @Range(from = 1, to = Long.MAX_VALUE) long period,
                                         @NotNull TimeUnit unit) {
         Ref<Task> ref = new Ref<>();
-        return ref.value = new PaperTask(scheduler.runAtFixedRate(plugin, t -> task.accept(ref.value), initialDelay, period, unit), true);
+        return ref.set(new PaperTask(scheduler.runAtFixedRate(plugin, ref.consume(task), initialDelay, period, unit), true));
     }
 }

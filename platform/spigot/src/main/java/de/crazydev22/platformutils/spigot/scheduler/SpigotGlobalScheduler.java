@@ -48,12 +48,12 @@ public class SpigotGlobalScheduler implements IGlobalScheduler {
     @Override
     public @NotNull <R> CompletableTask<R> runDelayed(@NotNull Function<CompletableTask<R>, R> task, @Range(from = 1, to = Long.MAX_VALUE) long delayTicks) {
         Ref<SpigotTask.Completable<R>> ref = new Ref<>();
-        return ref.value = new SpigotTask.Completable<>(scheduler.runTaskLater(plugin, () -> ref.value.complete(task), delayTicks));
+        return ref.set(new SpigotTask.Completable<>(scheduler.runTaskLater(plugin, ref.run(task, SpigotTask.Completable::complete), delayTicks)));
     }
 
     @Override
     public @NotNull Task runAtFixedRate(@NotNull Consumer<Task> task, @Range(from = 1, to = Long.MAX_VALUE) long initialDelayTicks, @Range(from = 1, to = Long.MAX_VALUE) long periodTicks) {
-        Ref<SpigotTask> ref = new Ref<>();
-        return ref.value = new SpigotTask(scheduler.runTaskTimer(plugin, () -> ref.value.run(task), initialDelayTicks, periodTicks), true);
+        Ref<Task> ref = new Ref<>();
+        return ref.set(new SpigotTask(scheduler.runTaskTimer(plugin, ref.run(task), initialDelayTicks, periodTicks), true));
     }
 }

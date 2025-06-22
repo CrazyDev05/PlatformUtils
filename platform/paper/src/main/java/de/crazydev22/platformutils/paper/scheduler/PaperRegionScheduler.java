@@ -54,7 +54,7 @@ public class PaperRegionScheduler implements IRegionScheduler {
                                                       int chunkZ,
                                                       @NotNull Function<CompletableTask<R>, R> task, @Range(from = 1, to = Long.MAX_VALUE) long delayTicks) {
         Ref<PaperTask.Completable<R>> ref = new Ref<>();
-        return ref.value = new PaperTask.Completable<>(scheduler.runDelayed(plugin, world, chunkX, chunkZ, t -> ref.value.complete(task), delayTicks), false);
+        return ref.set(new PaperTask.Completable<>(scheduler.runDelayed(plugin, world, chunkX, chunkZ, ref.consume(task, PaperTask.Completable::complete), delayTicks), false));
     }
 
     @Override
@@ -65,6 +65,6 @@ public class PaperRegionScheduler implements IRegionScheduler {
                                         @Range(from = 1, to = Long.MAX_VALUE) long initialDelayTicks,
                                         @Range(from = 1, to = Long.MAX_VALUE) long periodTicks) {
         Ref<Task> ref = new Ref<>();
-        return ref.value = new PaperTask(scheduler.runAtFixedRate(plugin, world, chunkX, chunkZ, t -> task.accept(ref.value), initialDelayTicks, periodTicks), false);
+        return ref.set(new PaperTask(scheduler.runAtFixedRate(plugin, world, chunkX, chunkZ, ref.consume(task), initialDelayTicks, periodTicks), false));
     }
 }

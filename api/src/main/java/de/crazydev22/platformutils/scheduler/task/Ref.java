@@ -26,6 +26,8 @@ package de.crazydev22.platformutils.scheduler.task;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * A generic container class that holds a single mutable value. This class is primarily
@@ -40,21 +42,11 @@ import java.util.Objects;
  */
 @ApiStatus.Internal
 public final class Ref<T> {
-
-    /**
-     * The value stored within the reference container. This field represents
-     * a mutable generic value of type {@code T}. It can be modified or accessed
-     * by instances of the containing class.
-     * <p>
-     * The {@link Object#equals}, {@link Object#hashCode}, and {@link Object#toString}
-     * methods interact with this field to support value-based comparisons, consistent
-     * hash codes, and meaningful string representations, respectively.
-     */
-    public T value;
+    private volatile Result<T> result;
 
     /**
      * Constructs an empty instance of {@code Ref}.
-     * The initial state of the constructed object is such that the mutable {@link #value}
+     * The initial state of the constructed object is such that the mutable {@link #result}
      * field will hold a default {@code null} reference until explicitly set.
      * <p>
      * This constructor provides a straightforward way to initialize a {@code Ref} object
@@ -63,19 +55,112 @@ public final class Ref<T> {
     public Ref() {
     }
 
+    /**
+     * Sets the provided value in the container and updates its internal state.
+     *
+     * @param value the value to be stored in the container
+     * @return the input value passed to the method
+     */
+    public T set(T value) {
+        this.result = new Result<>(value);
+        return value;
+    }
+
+    /**
+     * Retrieves the value stored in the container. If the value is not yet
+     * available, the method will continuously poll until the value becomes available.
+     * <p>
+     * This method blocks indefinitely until the stored value is non-null.
+     *
+     * @return the value of type {@code T} stored in the container.
+     */
+    public T get() {
+        for (;;) {
+            if (result == null) continue;
+            return result.value;
+        }
+    }
+
+    /**
+     * Creates a {@link Consumer} for the generic type {@code S} that allows processing tasks using a provided
+     * {@link Consumer} for the underlying type {@code T}.
+     * <p>
+     * The returned Consumer retrieves the current value stored in the container using the {@code get} method
+     * and passes it to the provided Consumer for processing.
+     *
+     * @param <S> the type of the argument for the returned Consumer
+     * @param consumer the {@link Consumer} that processes the value of type {@code T} retrieved
+     *                 from the container
+     * @return a {@link Consumer} that accepts a value of type {@code S} and delegates processing to the provided Consumer.
+     */
+    public <S> Consumer<S> consume(Consumer<T> consumer) {
+        return task -> consumer.accept(get());
+    }
+
+    /**
+     * Creates a {@link Consumer} for the generic type {@code S} that takes an input of type {@code V}
+     * along with an associated {@link BiConsumer} for processing the values of type {@code T} and {@code V}.
+     * <p>
+     * The returned {@link Consumer} uses the {@code get()} method to retrieve the current
+     * value stored in the container and passes it, along with the given second value,
+     * to the specified {@link BiConsumer}.
+     *
+     * @param <S> the type of the argument for the returned {@code Consumer}
+     * @param <V> the type of the second input used by the {@link BiConsumer}
+     * @param second the second input parameter to be used with the {@link BiConsumer}
+     * @param consumer the {@link BiConsumer} that processes the value of type {@code T} retrieved
+     *                 from the container along with the provided second value of type {@code V}
+     * @return a {@link Consumer} that accepts a value of type {@code S}, retrieves the current container
+     *         value, and applies the specified {@link BiConsumer} for processing
+     */
+    public <S, V> Consumer<S> consume(V second, BiConsumer<T, V> consumer) {
+        return task -> consumer.accept(get(), second);
+    }
+
+    /**
+     * Creates a {@link Runnable} that, when executed, retrieves the value stored in the container
+     * and passes it to the provided {@link Consumer} for processing.
+     *
+     * @param consumer the {@link Consumer} that will process the value retrieved
+     *                 from the container.
+     * @return a {@link Runnable} that retrieves the container's value and delegates its
+     *         processing to the provided {@link Consumer}.
+     */
+    public Runnable run(Consumer<T> consumer) {
+        return () -> consumer.accept(get());
+    }
+
+    /**
+     * Creates a {@link Runnable} that, when executed, retrieves the value stored in the container
+     * and applies the specified {@link BiConsumer} using the retrieved value and the provided
+     * second input parameter.
+     *
+     * @param <V> the type of the second input parameter used by the {@link BiConsumer}
+     * @param second the second input parameter to be used with the {@link BiConsumer}
+     * @param consumer the {@link BiConsumer} that processes the value retrieved from the container
+     *                 along with the provided second input parameter
+     * @return a {@link Runnable} that, when run, retrieves the container's value and invokes
+     *         the specified {@link BiConsumer} with it and the given second input
+     */
+    public <V> Runnable run(V second, BiConsumer<T, V> consumer) {
+        return () -> consumer.accept(get(), second);
+    }
+
     @Override
     public String toString() {
-        return "Ref[" + (value != null ? value.toString() : "null") + "]";
+        return "Ref[" + (result != null ? result.toString() : "null") + "]";
     }
 
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof Ref<?> ref)) return false;
-        return Objects.equals(value, ref.value);
+        return Objects.equals(result, ref.result);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(value);
+        return Objects.hashCode(result);
     }
+
+    private record Result<T>(T value) {}
 }

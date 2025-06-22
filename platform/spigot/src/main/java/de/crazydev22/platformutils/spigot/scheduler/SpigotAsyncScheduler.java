@@ -49,18 +49,18 @@ public class SpigotAsyncScheduler implements IAsyncScheduler {
     @Override
     public @NotNull <R> CompletableTask<R> run(@NotNull Function<CompletableTask<R>, R> task) {
         Ref<SpigotTask.Completable<R>> ref = new Ref<>();
-        return ref.value = new SpigotTask.Completable<>(scheduler.runTaskAsynchronously(plugin, () -> ref.value.complete(task)));
+        return ref.set(new SpigotTask.Completable<>(scheduler.runTaskAsynchronously(plugin, ref.run(task, SpigotTask.Completable::complete))));
     }
 
     @Override
     public @NotNull <R> CompletableTask<R> runDelayed(@NotNull Function<CompletableTask<R>, R> task, @Range(from = 0, to = Long.MAX_VALUE) long delay, @NotNull TimeUnit unit) {
         Ref<SpigotTask.Completable<R>> ref = new Ref<>();
-        return ref.value = new SpigotTask.Completable<>(scheduler.runTaskLaterAsynchronously(plugin, () -> ref.value.complete(task), unit.toMillis(delay) / 50));
+        return ref.set(new SpigotTask.Completable<>(scheduler.runTaskLaterAsynchronously(plugin, ref.run(task, SpigotTask.Completable::complete), unit.toMillis(delay) / 50)));
     }
 
     @Override
     public @NotNull Task runAtFixedRate(@NotNull Consumer<Task> task, @Range(from = 0, to = Long.MAX_VALUE) long initialDelay, @Range(from = 0, to = Long.MAX_VALUE) long period, @NotNull TimeUnit unit) {
-        Ref<SpigotTask> ref = new Ref<>();
-        return ref.value = new SpigotTask(scheduler.runTaskTimerAsynchronously(plugin, () -> ref.value.run(task), unit.toMillis(initialDelay) / 50, unit.toMillis(period) / 50), true);
+        Ref<Task> ref = new Ref<>();
+        return ref.set(new SpigotTask(scheduler.runTaskTimerAsynchronously(plugin, ref.run(task), unit.toMillis(initialDelay) / 50, unit.toMillis(period) / 50), true));
     }
 }

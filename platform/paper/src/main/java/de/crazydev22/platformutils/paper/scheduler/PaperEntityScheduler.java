@@ -53,12 +53,12 @@ public class PaperEntityScheduler implements IEntityScheduler {
                                                        @Nullable Runnable retired,
                                                        @Range(from = 1, to = Long.MAX_VALUE) long delayTicks) {
         Ref<PaperTask.Completable<R>> ref = new Ref<>();
-        var raw = scheduler.runDelayed(plugin, t -> ref.value.complete(task), () -> {
+        var raw = scheduler.runDelayed(plugin, ref.consume(task, PaperTask.Completable::complete), () -> {
             if (retired != null) retired.run();
-            ref.value.cancel();
+            ref.get().cancel();
         }, delayTicks);
         if (raw == null) return null;
-        return ref.value = new PaperTask.Completable<>(raw, false);
+        return ref.set(new PaperTask.Completable<>(raw, false));
     }
 
     @Override
@@ -67,8 +67,8 @@ public class PaperEntityScheduler implements IEntityScheduler {
                                          @Range(from = 1, to = Long.MAX_VALUE) long initialDelayTicks,
                                          @Range(from = 1, to = Long.MAX_VALUE) long periodTicks) {
         Ref<Task> ref = new Ref<>();
-        var raw = scheduler.runAtFixedRate(plugin, t -> task.accept(ref.value), retired, initialDelayTicks, periodTicks);
+        var raw = scheduler.runAtFixedRate(plugin, ref.consume(task), retired, initialDelayTicks, periodTicks);
         if (raw == null) return null;
-        return ref.value = new PaperTask(raw, false);
+        return ref.set(new PaperTask(raw, false));
     }
 }
