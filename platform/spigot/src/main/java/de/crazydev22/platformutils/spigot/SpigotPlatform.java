@@ -23,6 +23,7 @@
  */
 package de.crazydev22.platformutils.spigot;
 
+import de.crazydev22.platformutils.ItemEditor;
 import de.crazydev22.platformutils.Platform;
 import de.crazydev22.platformutils.scheduler.IAsyncScheduler;
 import de.crazydev22.platformutils.scheduler.IEntityScheduler;
@@ -41,6 +42,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -129,6 +131,11 @@ public class SpigotPlatform implements Platform {
     @Override
     public boolean isChunkGenerated(@NotNull World world, int x, int z) {
         return world.isChunkGenerated(x, z);
+    }
+
+    @Override
+    public @NotNull ItemEditor editItem(@NotNull ItemStack item) {
+        return new SpigotItemEditor(item);
     }
 
     public static boolean isValid(Entity entity) {

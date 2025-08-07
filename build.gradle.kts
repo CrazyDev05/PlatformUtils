@@ -24,7 +24,7 @@ dependencies {
 }
 
 allprojects {
-    apply(plugin = "java")
+    apply(plugin = "java-library")
     apply(plugin = "com.diffplug.spotless")
 
     java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
@@ -37,6 +37,7 @@ allprojects {
 
     dependencies {
         compileOnly("org.jetbrains:annotations:26.0.2")
+        compileOnly(rootProject.libs.adventure.api)
     }
 
     spotless.java {

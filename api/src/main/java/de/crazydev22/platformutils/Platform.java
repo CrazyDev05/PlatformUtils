@@ -34,6 +34,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -301,4 +302,12 @@ public interface Platform {
      * @return true if the chunk at the specified location has been generated, false otherwise
      */
     boolean isChunkGenerated(@NotNull World world, int x, int z);
+
+    /**
+     * Edits the provided item and returns an editor instance for further modifications.
+     *
+     * @param item the item to edit, must not be null
+     * @return an instance of ItemEditor for modifying the specified item
+     */
+    @NotNull ItemEditor editItem(@NotNull ItemStack item);
 }
