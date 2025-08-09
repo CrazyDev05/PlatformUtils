@@ -1,13 +1,15 @@
 [versions]
 api-version = "1.20.1-R0.1-SNAPSHOT"
-adventure = "4.24.0"
+adventure-api = "4.24.0" # https://github.com/KyoriPowered/adventure
+adventure-platform = "4.4.1" # https://github.com/KyoriPowered/adventure-platform
 
 [libraries]
 spigot = { module = "org.spigotmc:spigot-api", version.ref = "api-version" }
 folia = { module = "dev.folia:folia-api", version.ref = "api-version" }
-adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
-adventure-legacy = { module = "net.kyori:adventure-text-serializer-legacy", version.ref = "adventure" }
-adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
+adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure-api" }
+adventure-legacy = { module = "net.kyori:adventure-text-serializer-legacy", version.ref = "adventure-api" }
+adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure-api" }
+adventure-platform = { module = "net.kyori:adventure-platform-bukkit", version.ref = "adventure-platform" }
 
 [plugins]
 spotless = "com.diffplug.spotless:7.0.4"

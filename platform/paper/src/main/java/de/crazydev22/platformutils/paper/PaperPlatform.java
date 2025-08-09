@@ -23,6 +23,8 @@
  */
 package de.crazydev22.platformutils.paper;
 
+import de.crazydev22.platformutils.AudienceProvider;
+import de.crazydev22.platformutils.ItemEditor;
 import de.crazydev22.platformutils.Platform;
 import de.crazydev22.platformutils.paper.scheduler.PaperAsyncScheduler;
 import de.crazydev22.platformutils.paper.scheduler.PaperEntityScheduler;
@@ -39,6 +41,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -54,6 +57,7 @@ public class PaperPlatform implements Platform {
     private final IGlobalScheduler global;
     private final IRegionScheduler region;
     private final BooleanSupplier globalTickThread;
+    private final AudienceProvider provider;
 
     public PaperPlatform(@NotNull Plugin plugin) {
         this.plugin = plugin;
@@ -61,6 +65,7 @@ public class PaperPlatform implements Platform {
         async = new PaperAsyncScheduler(plugin, server.getAsyncScheduler());
         global = new PaperGlobalScheduler(plugin, server.getGlobalRegionScheduler());
         region = new PaperRegionScheduler(plugin, server.getRegionScheduler());
+        provider = new PaperAudienceProvider();
 
         BooleanSupplier method;
         try {
@@ -139,5 +144,15 @@ public class PaperPlatform implements Platform {
     @Override
     public boolean isChunkGenerated(@NotNull World world, int x, int z) {
         return world.isChunkGenerated(x, z) ;
+    }
+
+    @Override
+    public @NotNull ItemEditor editItem(@NotNull ItemStack item) {
+        return new PaperItemEditor(item);
+    }
+
+    @Override
+    public @NotNull AudienceProvider getAudienceProvider() {
+        return provider;
     }
 }

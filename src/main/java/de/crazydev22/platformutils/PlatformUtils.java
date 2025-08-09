@@ -46,9 +46,12 @@ public class PlatformUtils {
      * @param plugin the plugin instance used to initialize the platform
      * @return an appropriate Platform implementation based on the detected server configuration
      * @throws IllegalStateException if the platform is unsupported
+     * @throws IllegalStateException if the adventure api was relocated
      */
     @NotNull
     public static Platform createPlatform(@NotNull Plugin plugin) {
+        if (RelocationCheck.isRelocated())
+            throw new IllegalStateException("Adventure API was relocated.");
         if (hasClass("com.destroystokyo.paper.PaperConfig") || hasClass("io.papermc.paper.configuration.Configuration"))
             return new PaperPlatform(plugin);
         if (hasClass("org.spigotmc.SpigotConfig"))

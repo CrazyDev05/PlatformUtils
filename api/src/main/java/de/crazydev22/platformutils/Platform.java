@@ -310,4 +310,12 @@ public interface Platform {
      * @return an instance of ItemEditor for modifying the specified item
      */
     @NotNull ItemEditor editItem(@NotNull ItemStack item);
+
+    /**
+     * Retrieves the audience provider, which is responsible for managing and delivering
+     * communication to the intended audience.
+     *
+     * @return the {@link AudienceProvider} of this platform instance.
+     */
+    @NotNull AudienceProvider getAudienceProvider();
 }

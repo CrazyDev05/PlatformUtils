@@ -23,6 +23,7 @@
  */
 package de.crazydev22.platformutils.spigot;
 
+import de.crazydev22.platformutils.AudienceProvider;
 import de.crazydev22.platformutils.ItemEditor;
 import de.crazydev22.platformutils.Platform;
 import de.crazydev22.platformutils.scheduler.IAsyncScheduler;
@@ -53,6 +54,7 @@ public class SpigotPlatform implements Platform {
     private final IAsyncScheduler async;
     private final IGlobalScheduler global;
     private final IRegionScheduler region;
+    private final AudienceProvider provider;
 
     public SpigotPlatform(@NotNull Plugin plugin) {
         server = plugin.getServer();
@@ -60,6 +62,7 @@ public class SpigotPlatform implements Platform {
         async = new SpigotAsyncScheduler(plugin, scheduler);
         global = new SpigotGlobalScheduler(plugin, scheduler);
         region = new SpigotRegionScheduler(global);
+        provider = new SpigotAudienceProvider(plugin);
     }
 
     @Override
@@ -136,6 +139,11 @@ public class SpigotPlatform implements Platform {
     @Override
     public @NotNull ItemEditor editItem(@NotNull ItemStack item) {
         return new SpigotItemEditor(item);
+    }
+
+    @Override
+    public @NotNull AudienceProvider getAudienceProvider() {
+        return provider;
     }
 
     public static boolean isValid(Entity entity) {
