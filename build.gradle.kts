@@ -16,11 +16,16 @@ repositories {
     mavenCentral()
 }
 
+val included: Configuration by configurations.creating
+configurations.compileOnly {
+    extendsFrom(included)
+}
+
 dependencies {
     compileOnly(libs.spigot)
-    implementation(project(":api"))
-    implementation(project(":platform:spigot"))
-    implementation(project(":platform:paper"))
+    included(project(":api"))
+    included(project(":platform:spigot"))
+    included(project(":platform:paper"))
 }
 
 allprojects {
@@ -68,9 +73,9 @@ dokka.dokkaSourceSets.javaMain {
 
 tasks {
     jar {
-        dependsOn(configurations.runtimeClasspath)
+        dependsOn(included)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        from(configurations.runtimeClasspath.map { it.resolve().map { zipTree(it) } })
+        from(provider { included.resolve().map { zipTree(it) } })
     }
 
     register<Jar>("sourcesJar") {
