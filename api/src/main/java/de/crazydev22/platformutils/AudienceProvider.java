@@ -29,6 +29,7 @@ import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.permission.PermissionChecker;
 import net.kyori.adventure.util.TriState;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -78,6 +79,18 @@ public interface AudienceProvider {
      * @return a player audience
      */
     @NotNull Audience player(final @NotNull UUID playerId);
+
+    /**
+     * Gets an audience for an individual player.
+     *
+     * <p>If the player is not online, messages are silently dropped.</p>
+     *
+     * @param player a player
+     * @return a player audience
+     */
+    default @NotNull Audience player(final @NotNull Player player) {
+        return this.player(player.getUniqueId());
+    }
 
     /**
      * Gets or creates an audience containing all viewers with the provided permission.
