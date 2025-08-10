@@ -45,7 +45,7 @@ class RelocationCheck {
     private static Set<String> classNames(String... classes) {
         Set<String> set = new HashSet<>(classes.length);
         for (var className : classes) {
-            set.add(className.replace('.', '#'));
+            set.add(className.replace('#', '.'));
         }
         return Collections.unmodifiableSet(set);
     }
