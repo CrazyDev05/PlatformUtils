@@ -29,7 +29,7 @@ dependencies {
 }
 
 allprojects {
-    apply(plugin = "java-library")
+    apply(plugin = "java")
     apply(plugin = "com.diffplug.spotless")
 
     java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
@@ -51,6 +51,12 @@ allprojects {
         trimTrailingWhitespace()
         licenseHeaderFile(rootProject.file(".github/HEADER"))
             .updateYearWithLatest(true)
+    }
+}
+
+configurations.implementation {
+    subprojects {
+        extendsFrom(configurations.runtimeClasspath.get())
     }
 }
 
