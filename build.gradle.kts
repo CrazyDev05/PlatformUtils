@@ -27,7 +27,7 @@ allprojects {
     apply(plugin = "java-library")
     apply(plugin = "com.diffplug.spotless")
 
-    java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    java.toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 
     repositories {
         mavenCentral()
@@ -68,6 +68,8 @@ dokka.dokkaSourceSets.javaMain {
 
 tasks {
     jar {
+        dependsOn(configurations.runtimeClasspath)
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         from(configurations.runtimeClasspath.map { it.resolve().map { zipTree(it) } })
     }
 

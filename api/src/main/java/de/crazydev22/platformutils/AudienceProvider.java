@@ -34,6 +34,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Represents a provider for audiences, supporting multiple types of audiences such as the server's console,
+ * online players, and players with specific permissions or in specific worlds.
+ *
+ * The audiences retrieved by this provider are dynamically updated as the conditions for those audiences
+ * (e.g., players joining or leaving, permission changes) change.
+ */
 public interface AudienceProvider {
     /**
      * Gets an audience for all online players, including the server's console.
