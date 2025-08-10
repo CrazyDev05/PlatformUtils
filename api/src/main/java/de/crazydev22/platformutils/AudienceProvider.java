@@ -28,7 +28,10 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.permission.PermissionChecker;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.util.TriState;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +41,7 @@ import java.util.UUID;
 /**
  * Represents a provider for audiences, supporting multiple types of audiences such as the server's console,
  * online players, and players with specific permissions or in specific worlds.
- *
+ * <p>
  * The audiences retrieved by this provider are dynamically updated as the conditions for those audiences
  * (e.g., players joining or leaving, permission changes) change.
  */
@@ -91,6 +94,23 @@ public interface AudienceProvider {
     default @NotNull Audience player(final @NotNull Player player) {
         return this.player(player.getUniqueId());
     }
+
+    /**
+     * Gets an audience for the provided command sender.
+     *
+     * @param sender the command sender for which the audience is created
+     * @return an audience representing the specified command sender
+     */
+    @NotNull Audience sender(final @NotNull CommandSender sender);
+
+    /**
+     * Converts an Entity instance into an Emitter instance, which can be used to represent the entity
+     * as a sound emitter in the game's audio system.
+     *
+     * @param entity the entity to be converted to a sound emitter, must not be null
+     * @return an Emitter instance representing the specified entity
+     */
+    Sound.@NotNull Emitter asEmitter(final @NotNull Entity entity);
 
     /**
      * Gets or creates an audience containing all viewers with the provided permission.

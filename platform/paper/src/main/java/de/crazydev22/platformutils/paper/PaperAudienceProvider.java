@@ -27,8 +27,11 @@ import de.crazydev22.platformutils.AudienceProvider;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -50,6 +53,16 @@ public class PaperAudienceProvider implements AudienceProvider {
     public @NotNull Audience player(@NotNull UUID playerId) {
         var player = Bukkit.getPlayer(playerId);
         return player == null ? Audience.empty() : player;
+    }
+
+    @Override
+    public @NotNull Audience sender(@NotNull CommandSender sender) {
+        return sender;
+    }
+
+    @Override
+    public Sound.@NotNull Emitter asEmitter(@NotNull Entity entity) {
+        return entity;
     }
 
     @Override

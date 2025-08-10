@@ -27,7 +27,10 @@ import de.crazydev22.platformutils.AudienceProvider;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -60,6 +63,16 @@ public class SpigotAudienceProvider implements AudienceProvider, Listener {
     @Override
     public @NotNull Audience player(@NotNull UUID playerId) {
         return audiences.player(playerId);
+    }
+
+    @Override
+    public @NotNull Audience sender(@NotNull CommandSender sender) {
+        return audiences.sender(sender);
+    }
+
+    @Override
+    public Sound.@NotNull Emitter asEmitter(@NotNull Entity entity) {
+        return BukkitAudiences.asEmitter(entity);
     }
 
     @Override
