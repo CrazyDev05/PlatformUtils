@@ -26,14 +26,8 @@ package de.crazydev22.platformutils.paper;
 import de.crazydev22.platformutils.AudienceProvider;
 import de.crazydev22.platformutils.ItemEditor;
 import de.crazydev22.platformutils.Platform;
-import de.crazydev22.platformutils.paper.scheduler.PaperAsyncScheduler;
-import de.crazydev22.platformutils.paper.scheduler.PaperEntityScheduler;
-import de.crazydev22.platformutils.paper.scheduler.PaperGlobalScheduler;
-import de.crazydev22.platformutils.paper.scheduler.PaperRegionScheduler;
-import de.crazydev22.platformutils.scheduler.IAsyncScheduler;
-import de.crazydev22.platformutils.scheduler.IEntityScheduler;
-import de.crazydev22.platformutils.scheduler.IGlobalScheduler;
-import de.crazydev22.platformutils.scheduler.IRegionScheduler;
+import de.crazydev22.platformutils.paper.scheduler.*;
+import de.crazydev22.platformutils.scheduler.*;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -45,6 +39,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Range;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BooleanSupplier;
@@ -74,6 +69,11 @@ public class PaperPlatform implements Platform {
             method = server::isPrimaryThread;
         }
         globalTickThread = method;
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return plugin;
     }
 
     @Override
@@ -144,6 +144,11 @@ public class PaperPlatform implements Platform {
     @Override
     public boolean isChunkGenerated(@NotNull World world, int x, int z) {
         return world.isChunkGenerated(x, z) ;
+    }
+
+    @Override
+    public @NotNull IRegionExecutor createRegionExecutor(@Range(from = 1, to = Integer.MAX_VALUE) int msPerTick) {
+        return new PaperRegionExecutor(this, msPerTick);
     }
 
     @Override

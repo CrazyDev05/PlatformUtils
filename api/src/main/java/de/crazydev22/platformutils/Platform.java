@@ -23,10 +23,7 @@
  */
 package de.crazydev22.platformutils;
 
-import de.crazydev22.platformutils.scheduler.IAsyncScheduler;
-import de.crazydev22.platformutils.scheduler.IEntityScheduler;
-import de.crazydev22.platformutils.scheduler.IGlobalScheduler;
-import de.crazydev22.platformutils.scheduler.IRegionScheduler;
+import de.crazydev22.platformutils.scheduler.*;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -35,9 +32,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -48,6 +47,13 @@ import java.util.concurrent.CompletableFuture;
  */
 @ApiStatus.NonExtendable
 public interface Platform {
+    /**
+     * Retrieves the current plugin instance.
+     *
+     * @return the Plugin instance associated with this context.
+     */
+    Plugin getPlugin();
+
     /**
      * Folia: Returns whether the current thread is ticking a region and that
      * the region being ticked owns the chunk at the specified world and block
@@ -302,6 +308,17 @@ public interface Platform {
      * @return true if the chunk at the specified location has been generated, false otherwise
      */
     boolean isChunkGenerated(@NotNull World world, int x, int z);
+
+    /**
+     * Creates and returns an instance of {@link IRegionExecutor} which is responsible for
+     * managing and executing tasks in a region over a specified time period.
+     *
+     * @param msPerTick the maximum number of milliseconds that the executor
+     *                  is allowed to spend per tick. Must be a positive integer.
+     * @return an instance of IRegionExecutor configured with the specified
+     *         maximum time per tick.
+     */
+    @NotNull IRegionExecutor createRegionExecutor(@Range(from = 1, to = Integer.MAX_VALUE) int msPerTick);
 
     /**
      * Edits the provided item and returns an editor instance for further modifications.
