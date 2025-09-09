@@ -1,6 +1,7 @@
 package de.crazydev22.platformutils.scheduler;
 
 import org.bukkit.World;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,6 +64,7 @@ public interface IRegionExecutor extends AutoCloseable {
      */
     <T> CompletableFuture<T> queue(@NotNull World world, int chunkX, int chunkZ, @NotNull Callable<T> callable);
 
+    @ApiStatus.Internal
     static <T> Runnable complete(CompletableFuture<T> future, Callable<T> callable) {
         return () -> {
             try {
