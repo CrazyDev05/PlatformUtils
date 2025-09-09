@@ -1,3 +1,26 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2025 Julian Krings
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package de.crazydev22.platformutils.scheduler;
 
 import org.bukkit.World;
@@ -64,6 +87,16 @@ public interface IRegionExecutor extends AutoCloseable {
      */
     <T> CompletableFuture<T> queue(@NotNull World world, int chunkX, int chunkZ, @NotNull Callable<T> callable);
 
+    /**
+     * Creates a {@link Runnable} that completes the provided {@link CompletableFuture} with
+     * the result of the given {@link Callable}. If the {@link Callable} throws an exception,
+     * the {@link CompletableFuture} is completed exceptionally with the thrown exception.
+     *
+     * @param <T>      The type of result produced by the {@link Callable} and completed in the {@link CompletableFuture}.
+     * @param future   The {@link CompletableFuture} to be completed with the result or exception of the {@link Callable}. Must not be null.
+     * @param callable The {@link Callable} whose result or exception will be used to complete the {@link CompletableFuture}. Must not be null.
+     * @return A {@link Runnable} that, when executed, completes the {@link CompletableFuture} with the result or exception of the {@link Callable}.
+     */
     @ApiStatus.Internal
     static <T> Runnable complete(CompletableFuture<T> future, Callable<T> callable) {
         return () -> {
