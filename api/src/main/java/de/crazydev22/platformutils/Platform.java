@@ -55,6 +55,13 @@ public interface Platform {
     Plugin getPlugin();
 
     /**
+     * Retrieves the type associated with this instance.
+     *
+     * @return the type of this instance
+     */
+    Type getType();
+
+    /**
      * Folia: Returns whether the current thread is ticking a region and that
      * the region being ticked owns the chunk at the specified world and block
      * position as included in the specified location.
@@ -141,6 +148,14 @@ public interface Platform {
      * @return true if the current thread is ticking the global region
      */
     boolean isGlobalTickThread();
+
+    /**
+     * Folia: Returns whether the current thread is either the global or a region ticking thread.
+     * Paper/Spigot: Returns {@link Server#isPrimaryThread()}
+     *
+     * @return true if the current thread is a ticking thread
+     */
+    boolean isTickThread();
 
     /**
      * Scheduler that may be used to schedule tasks to execute asynchronously from the server tick process.

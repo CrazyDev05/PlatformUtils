@@ -26,12 +26,10 @@ package de.crazydev22.platformutils.paper;
 import de.crazydev22.platformutils.AudienceProvider;
 import de.crazydev22.platformutils.ItemEditor;
 import de.crazydev22.platformutils.Platform;
+import de.crazydev22.platformutils.Type;
 import de.crazydev22.platformutils.paper.scheduler.*;
 import de.crazydev22.platformutils.scheduler.*;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Server;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -53,6 +51,7 @@ public class PaperPlatform implements Platform {
     private final IRegionScheduler region;
     private final BooleanSupplier globalTickThread;
     private final AudienceProvider provider;
+    private final Type type;
 
     public PaperPlatform(@NotNull Plugin plugin) {
         this.plugin = plugin;
@@ -63,17 +62,26 @@ public class PaperPlatform implements Platform {
         provider = new PaperAudienceProvider();
 
         BooleanSupplier method;
+        Type type;
         try {
             method = server::isGlobalTickThread;
+            type = Type.FOLIA;
         } catch (Throwable e) {
             method = server::isPrimaryThread;
+            type = Type.PAPER;
         }
+        this.type = type;
         globalTickThread = method;
     }
 
     @Override
     public Plugin getPlugin() {
         return plugin;
+    }
+
+    @Override
+    public Type getType() {
+        return type;
     }
 
     @Override
@@ -109,6 +117,11 @@ public class PaperPlatform implements Platform {
     @Override
     public boolean isGlobalTickThread() {
         return globalTickThread.getAsBoolean();
+    }
+
+    @Override
+    public boolean isTickThread() {
+        return Bukkit.isPrimaryThread();
     }
 
     @Override

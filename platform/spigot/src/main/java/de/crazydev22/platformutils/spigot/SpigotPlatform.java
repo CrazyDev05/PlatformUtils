@@ -26,6 +26,7 @@ package de.crazydev22.platformutils.spigot;
 import de.crazydev22.platformutils.AudienceProvider;
 import de.crazydev22.platformutils.ItemEditor;
 import de.crazydev22.platformutils.Platform;
+import de.crazydev22.platformutils.Type;
 import de.crazydev22.platformutils.scheduler.*;
 import de.crazydev22.platformutils.spigot.scheduler.*;
 import org.bukkit.Chunk;
@@ -68,6 +69,11 @@ public class SpigotPlatform implements Platform {
     }
 
     @Override
+    public Type getType() {
+        return Type.SPIGOT;
+    }
+
+    @Override
     public boolean isOwnedByCurrentRegion(@NotNull Location location) {
         return server.isPrimaryThread();
     }
@@ -99,6 +105,11 @@ public class SpigotPlatform implements Platform {
 
     @Override
     public boolean isGlobalTickThread() {
+        return server.isPrimaryThread();
+    }
+
+    @Override
+    public boolean isTickThread() {
         return server.isPrimaryThread();
     }
 
